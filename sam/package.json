@@ -1,13 +1,13 @@
 {
-    "name": "replaced-by-user-input",
-    "description": "replaced-by-user-input",
-    "version": "0.0.1",
-    "private": true,
-    "dependencies": {},
-    "devDependencies": {
-        "jest": "^26.6.3"
-    },
-    "scripts": {
-        "test": "jest"
-    }
+  "name": "AWS Connect - Vanity Phone Number Converter",
+  "description": "CloudFormation (via SAM/CDK) to produce a vanity phone number converter application using AWS Connect, Lambda, and DynamoDB.",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^26.6.3"
+  },
+  "scripts": {
+    "test": "jest"
+  }
 }
