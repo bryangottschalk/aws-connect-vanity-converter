@@ -5,12 +5,15 @@
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
 AWSTemplateFormatVersion: 2010-09-09
 Description: >-
-  sam
+  AWS Connect SAM - Vanity Number Generator App
 
+Globals:
+  Function:
+    Runtime: nodejs14.x
 # Transform section specifies one or more macros that AWS CloudFormation uses to process your template
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
 Transform:
-- AWS::Serverless-2016-10-31
+  - AWS::Serverless-2016-10-31
 
 # Resources declares the AWS resources that you want to include in the stack
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
@@ -19,14 +22,40 @@ Resources:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
   # This is a Lambda function config associated with the source code: hello-from-lambda.js
-  helloFromLambdaFunction:
+  VanityPhoneNumberTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: callerPhoneNumber
+          KeyType: HASH
+      AttributeDefinitions:
+        - AttributeName: callerPhoneNumber
+          AttributeType: S
+
+  VanityPhoneNumberConverterFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/hello-from-lambda.helloFromLambdaHandler
-      Runtime: nodejs14.x
+      CodeUri: src/handlers
+      Handler: vanity-phone-number-converter.handler
       MemorySize: 128
-      Timeout: 100
-      Description: A Lambda function that returns a static string.
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref VanityPhoneNumberTable
+      Description: A Lambda function that accepts a caller's phone number and stores the 5 best resulting vanity numbers in a DynamoDB table.
       Policies:
-        # Give Lambda basic execution Permission to the helloFromLambda
         - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
+            TableName: !Ref VanityPhoneNumberTable
+
+Outputs:
+  VanityPhoneNumberTable:
+    Description: Name of the DynamoDB Vanity Phone Numbers Table
+    Value: !Ref VanityPhoneNumberTable
+    Export:
+      Name: !Sub "${AWS::StackName}-VanityPhoneNumberTableName"
+  VanityPhoneNumberConverterFunction:
+    Description: Vanity Phone Number Converter Function ARN
+    Value: !GetAtt VanityPhoneNumberTable.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-VanityPhoneNumberConverterFunction"
