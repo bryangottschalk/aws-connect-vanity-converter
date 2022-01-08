@@ -36,9 +36,9 @@ Resources:
   VanityPhoneNumberConverterFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: src/handlers
-      Handler: vanity-phone-number-converter.handler
-      MemorySize: 128
+      CodeUri: build/
+      Handler: webpack-bundle.handler
+      MemorySize: 256
       Environment:
         Variables:
           TABLE_NAME: !Ref VanityPhoneNumberTable

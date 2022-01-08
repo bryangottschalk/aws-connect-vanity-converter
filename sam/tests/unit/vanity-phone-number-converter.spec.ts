@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import vanityPhoneNumberConverterHandler from "../../src/handlers/vanity-phone-number-converter";
+import { handler as vanityPhoneNumberConverterHandler } from "../../src/handlers/vanity-phone-number-converter";
 import * as AWS from "aws-sdk";
 import * as AWSMock from "aws-sdk-mock";
 
