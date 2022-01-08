@@ -1,0 +1,4 @@
+{
+  "require": ["tests/runners/mocha/init.js"],
+  "spec": ["tests/**/*.spec.ts"]
+}
