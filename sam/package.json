@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build": "webpack",
-    "test": "mocha --config tests/runners/mocha/.mocharc.json",
+    "test": "mocha --timeout 10000 --config tests/runners/mocha/.mocharc.json",
     "deploy:": "webpack && sam deploy"
   },
   "dependencies": {

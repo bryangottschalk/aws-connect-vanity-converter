@@ -15,8 +15,9 @@ Test plans
 
 describe("Test for vanity-phone-number-converter", function () {
   it("Verifies successful response", async () => {
-    const result = await vanityPhoneNumberConverterHandler();
-    const expectedResult = "TODO: add vanity phone number converter function";
-    expect(result).to.equal(expectedResult);
+    const result: string[] = await vanityPhoneNumberConverterHandler({
+      phoneNumber: "8004742253",
+    });
+    expect(result).to.be.an("array");
   });
 });
