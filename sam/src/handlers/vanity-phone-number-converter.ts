@@ -1,6 +1,6 @@
 import { DynamoDB } from "aws-sdk";
 const words: string[] = require("an-array-of-english-words");
-
+const DDB = new DynamoDB.DocumentClient();
 interface PhoneCharMap {
   [key: string]: string[];
 }
@@ -95,5 +95,22 @@ export const handler = async (event) => {
     }
   }
   console.log("vanityNumbers", vanityNumbers);
+  await saveToDB(phoneNumber, vanityNumbers);
   return vanityNumbers;
+};
+
+const saveToDB = async (phoneNumber: string, vanityNumbers: string[]) => {
+  try {
+    await DDB.put({
+      TableName: process.env.TABLE_NAME,
+      Item: {
+        callerPhoneNumber: phoneNumber,
+        vanityNumbers,
+      },
+    }).promise();
+    console.log("save to DDB success");
+  } catch (err) {
+    console.log("save to DDB error:");
+    console.info(err);
+  }
 };

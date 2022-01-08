@@ -10,6 +10,7 @@ Description: >-
 Globals:
   Function:
     Runtime: nodejs14.x
+    Timeout: 20
 # Transform section specifies one or more macros that AWS CloudFormation uses to process your template
 # https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
 Transform:
@@ -38,7 +39,7 @@ Resources:
     Properties:
       CodeUri: build/
       Handler: webpack-bundle.handler
-      MemorySize: 256
+      MemorySize: 1024
       Environment:
         Variables:
           TABLE_NAME: !Ref VanityPhoneNumberTable
