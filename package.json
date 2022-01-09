@@ -21,7 +21,7 @@
   "scripts": {
     "build": "webpack",
     "test": "mocha --timeout 10000 --config tests/runners/mocha/.mocharc.json",
-    "deploy:": "webpack && sam deploy"
+    "deploy": "webpack && sam deploy --guided"
   },
   "dependencies": {
     "an-array-of-english-words": "^2.0.0"
