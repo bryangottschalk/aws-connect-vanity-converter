@@ -1,0 +1,89 @@
+{
+  "modules": [
+    {
+      "id": "d287e1b5-52d7-4ec0-83da-a88abb233fc9",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "0f83ce39-0137-4528-bad7-245cf11b87eb"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "There was an error when we tried to get vanity number for you. Sorry about that!",
+          "namespace": null
+        },
+        { "name": "TextToSpeechType", "value": "text" }
+      ],
+      "metadata": { "position": { "x": 1472, "y": 290 }, "useDynamic": false }
+    },
+    {
+      "id": "0f83ce39-0137-4528-bad7-245cf11b87eb",
+      "type": "Disconnect",
+      "branches": [],
+      "parameters": [],
+      "metadata": { "position": { "x": 1782, "y": 238 } }
+    },
+    {
+      "id": "15d18859-6e52-49c0-8a8c-5713867294c4",
+      "type": "InvokeExternalResource",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "a724e3fb-9804-4186-9f81-f103bcf24359"
+        },
+        {
+          "condition": "Error",
+          "transition": "d287e1b5-52d7-4ec0-83da-a88abb233fc9"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "FunctionArn",
+          "value": "arn:aws:lambda:us-east-1:695097972413:function:aws-connect-vanity-sam-VanityPhoneNumberConverterF-PfjQGj1VV3BR",
+          "namespace": null
+        },
+        { "name": "TimeLimit", "value": "8" }
+      ],
+      "metadata": {
+        "position": { "x": 702, "y": 111 },
+        "dynamicMetadata": {},
+        "useDynamic": false
+      },
+      "target": "Lambda"
+    },
+    {
+      "id": "a724e3fb-9804-4186-9f81-f103bcf24359",
+      "type": "PlayPrompt",
+      "branches": [
+        {
+          "condition": "Success",
+          "transition": "0f83ce39-0137-4528-bad7-245cf11b87eb"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "Text",
+          "value": "$.External.connectBotResponse",
+          "namespace": null
+        },
+        { "name": "TextToSpeechType", "value": "text" }
+      ],
+      "metadata": { "position": { "x": 1471, "y": 100 }, "useDynamic": false }
+    }
+  ],
+  "version": "1",
+  "start": "15d18859-6e52-49c0-8a8c-5713867294c4",
+  "metadata": {
+    "entryPointPosition": { "x": 20, "y": 18 },
+    "snapToGrid": false,
+    "name": "Create Vanity Phone #'s Based on Caller Phone",
+    "description": "An Amazon Connect contact flow that looks at the caller's phone number and says the vanity possibilities that come back from the Lambda function.",
+    "type": "contactFlow",
+    "status": "published",
+    "hash": "f95e8b3711b2a75f40daac2566bc770f5770f463df8da2ecd3609c7a7cf654df"
+  },
+  "type": "contactFlow"
+}

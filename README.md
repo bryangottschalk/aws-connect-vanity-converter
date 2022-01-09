@@ -33,7 +33,7 @@ sam deploy --guided
 2. Create a Connect instance in the AWS Console - note your Access URL for step 5
 3. Add a phone number to your Connect instance
 4. Add the Lambda generated from the SAM deploy to your new Connect instance. Go to Amazon Connect > Your instance > Contact flows > AWS Lambda > Add Lambda Function
-5. Import the Contact Flow from this repo. Go to your Access URL for your Connect Instance > Login > Go to Routing/Contact flows > Click "Create contact flow" > Down arrow next to save > "Import flow" and select the JSON file from this repo.
+5. Import the Contact Flow from ./VanityPhoneNumberContactFlow.json. Go to your Access URL for your Connect Instance > Login > Go to Routing/Contact flows > Click "Create contact flow" > Down arrow next to save > "Import flow" and select the JSON file from this repo.
 
 ## Unit tests
 
@@ -67,7 +67,7 @@ You can also open the .drawio file in the root directory from the draw.io websit
 
 ## Cleanup
 
-To delete the sample application that you created, use the AWS CLI. Your stack name comes from when you initially deployed the application via sam deploy.
+To delete the sample application that you created, use the AWS CLI. You set the stack name yourself when you initially deployed the application via sam deploy.
 
 ```bash
 aws cloudformation delete-stack --stack-name yourstackname
