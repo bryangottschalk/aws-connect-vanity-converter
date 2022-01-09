@@ -46,6 +46,10 @@ npm run test
 
 ## Architecture Diagram
 
+View the application architure at this link: https://drive.google.com/file/d/1s6ENIEZDaD51v2_frfEkOSr3I4floXx-/view?usp=sharing
+
+You can also open the .drawio file in the root directory from the draw.io website.
+
 ## Future Improvements
 
 - Consider re-writing iterative vanity number permutations algorithm to be recursive rather than iterative. This would make the function more terse but is not likely to improve time complexity. A recursive algorithm could be achieved through depth first search.
