@@ -1,11 +1,11 @@
-# Description: AWS Connect Vanity Converter App
+# AWS Connect Vanity Converter App
 
 This project contains AWS SAM CloudFormation templates to the following resources:
 
-- AWS Lambda Function: Includes a vanity number generation algorithm which is intended to be trigged by an AWS Contact Flow to produce vanity phone number suggestions to the user.
+- AWS Lambda Function: Includes a vanity number generation algorithm which is intended to be trigged by an AWS Contact Flow to produce vanity phone number suggestions to the user
 - DynamoDB Table: Stores the results of the Lambda function containing the caller's phone number and the suggested vanity phone numbers
 
-It also includes unit tests to be ran locally, a webpack configuration to allow the Lambda function to be written in TypeScript, and an architecture diagram.
+The repository also includes unit tests and a webpack configuration to allow the Lambda function to be written in TypeScript.
 
 - `src` - Code for the application's Lambda function.
 - `events` - Invocation events that you can use to invoke the function.
@@ -14,13 +14,13 @@ It also includes unit tests to be ran locally, a webpack configuration to allow 
 
 ## Quick Start
 
+To test my deployment and have AWS Connect read your vanity numbers results back to you, simply call (833) 346-1507.
 Prerequisites:
 
 - AWS SAM CLI - [Install the AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html).
 - Node.js - [Install Node.js 14](https://nodejs.org/en/), including the npm package management tool.
 - Docker - [Install Docker community edition](https://hub.docker.com/search/?type=edition&offering=community).
-
-* NOTE: Before deploying, ensure that your shell is assigned to the correct AWS Profile.
+- NOTE: Before deploying, ensure that your shell is assigned to the correct AWS Profile.
 
 1. To build and deploy this application for the first time, run the following in your shell:
 
@@ -30,15 +30,19 @@ npm run build
 sam deploy --guided
 ```
 
-2. Run unit tests:
-
-```bash
-npm run test
-```
-
-3. Create an Amazon Connect instance in the AWS Console - note your Access URL for step 4
+2. Create a Connect instance in the AWS Console - note your Access URL for step 5
+3. Add a phone number to your Connect instance
 4. Add the Lambda generated from the SAM deploy to your new Connect instance. Go to Amazon Connect > Your instance > Contact flows > AWS Lambda > Add Lambda Function
 5. Import the Contact Flow from this repo. Go to your Access URL for your Connect Instance > Login > Go to Routing/Contact flows > Click "Create contact flow" > Down arrow next to save > "Import flow" and select the JSON file from this repo.
+
+## Unit tests
+
+Tests are defined in the `tests` folder in this project. Use `npm` to install the [Mocha test framework] and run unit tests.
+
+```bash
+npm install
+npm run test
+```
 
 ## Architecture Diagram
 
@@ -57,19 +61,10 @@ npm run test
 - Connecting Lambda to Contact Flow: It took me some time to find where to add my Lambda to my AWS Connect Contact Flow. I initially referenced the ARN and could not get beyond the error path preceding the Lambda invokation, in which it did not seem to produce any error in CloudWatch for assistance with debugging. I then discovered this was due to not having permissions to reference or invoke it. I then found where to add the Lambda to my Connect Instance in the AWS Console and resolved the issue.
 - Reading Lambda response from Contact Flow: I was initially trying to read the return result of the Lambda using the
 
-## Unit tests
-
-Tests are defined in the `tests` folder in this project. Use `npm` to install the [Mocha test framework] and run unit tests.
-
-```bash
-my-application$ npm install
-my-application$ npm run test
-```
-
 ## Cleanup
 
-To delete the sample application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
+To delete the sample application that you created, use the AWS CLI. Your stack name comes from when you initially deployed the application via sam deploy.
 
 ```bash
-aws cloudformation delete-stack --stack-name sam
+aws cloudformation delete-stack --stack-name yourstackname
 ```
