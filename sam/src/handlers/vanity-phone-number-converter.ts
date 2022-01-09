@@ -5,8 +5,7 @@ interface PhoneCharMap {
   [key: string]: string[];
 }
 const phoneCharacterMap: PhoneCharMap = {
-  // Assume 0 and 1 are not in the phone number for now as they aren't on the keypad
-  // '0': [""],
+  // '0': [""], replaceUnhandledDigits() below replaces 0 and 1 with 2
   // '1': [""],
   '2': ['a', 'b', 'c'],
   '3': ['d', 'e', 'f'],
@@ -24,7 +23,7 @@ const getPermutationsIterative = (phoneNumber: string): string[] => {
    phone number = 800-474-2253 example 
    1st iteration - queue is [""]
    2nd iteration - queue is ['g', 'h', 'i']
-   3rd iteration - queue is queue ['gp', 'gq', 'gr', 'gs', 'hp', 'hq', 'hr', 'hs', 'ip', 'iq', 'ir', 'is']
+   3rd iteration - queue is ['gp', 'gq', 'gr', 'gs', 'hp', 'hq', 'hr', 'hs', 'ip', 'iq', 'ir', 'is']
   */
   for (let i = 0; i < phoneNumber.length; i++) {
     let digit = phoneNumber[i];
@@ -58,6 +57,58 @@ const replaceUnhandledDigits = (callerPhoneNumber: string) => {
   return res;
 };
 
+const getVanityNumbersFromPermutations = (
+  permutations: string[],
+  vanityNumbers: string[],
+  vanityResultPrefix: string
+) => {
+  for (let i = 0; i < permutations.length; i++) {
+    if (vanityNumbers.length >= 5) {
+      break; // 5 best results max reached
+    }
+    let permutation = permutations[i];
+    for (let j = 0; j < words.length; j++) {
+      if (permutation === words[j]) {
+        vanityNumbers.push(`${vanityResultPrefix}${words[j].toUpperCase()}`);
+        if (vanityNumbers.length >= 5) {
+          break; // 5 best results max reached
+        }
+      }
+    }
+  }
+};
+
+const generateConnectBotResponse = (
+  vanityNumbers: string[],
+  callerPhoneNumber: string
+) => {
+  let connectBotResponse = '';
+  if (vanityNumbers.length) {
+    const vanityNumbersJoined = vanityNumbers.join(', '); // read conversationally
+    const csvVanityNumbers = vanityNumbers.join('').split('').join(', '); // CSV is read slowly
+    connectBotResponse = `Thank you for calling our vanity number generator.
+    \nWe have successfully saved ${
+      vanityNumbers.length === 1
+        ? 'a vanity phone number'
+        : 'vanity phone numbers'
+    } based on your caller number to our DynamoDB Database.\nThe vanity number${
+      vanityNumbers.length > 1 && 's'
+    } generated for your caller number ${
+      vanityNumbers.length > 1 ? 'are' : 'is'
+    }: ${vanityNumbersJoined}.\n
+    Spelled out they are ${csvVanityNumbers}`;
+    if (callerPhoneNumber.includes('0') || callerPhoneNumber.includes('1')) {
+      connectBotResponse +=
+        "\nPlease note that because your phone number includes a zero or a one in it, those numbers were replaced with 2's in your vanity numbers so they can correspond with a phone keypad...";
+    }
+  } else {
+    connectBotResponse =
+      '\nThank you for calling our vanity number generator. Unfortunately, your phone number did not generate any results using the words we have to compare to';
+  }
+  connectBotResponse += '\nThanks for using our services. \nHave a great day!`';
+  return connectBotResponse;
+};
+
 export const handler = async (event, context, callback) => {
   let callerPhoneNumber = '';
   if (event['Details']) {
@@ -68,96 +119,44 @@ export const handler = async (event, context, callback) => {
   }
 
   const formattedPhoneNumber = replaceUnhandledDigits(callerPhoneNumber);
-  console.log('formattedPhoneNumber', formattedPhoneNumber);
-  /*
-  8004742253 fallback example for local testing returns:
-  vanityNumbers [
-  '800GRIBBLE',
-  '800474ABLE',
-  '800474BAKE',
-  '800474BALD',
-  '800474BALE'
-  ]
-  */
+  /* 8004742253 fallback example for local testing: vanityNumbers ['800GRIBBLE','800474ABLE','800474BAKE','800474BALD','800474BALE']*/
   if (formattedPhoneNumber.length < 10) {
     return [];
   }
   const first3 = formattedPhoneNumber.slice(0, 3);
   const last7 = formattedPhoneNumber.slice(formattedPhoneNumber.length - 7);
-  const last4 = formattedPhoneNumber.slice(formattedPhoneNumber.length - 4);
-  const first6 = formattedPhoneNumber.slice(0, 6);
-
   // ideally format is 3DIGITAREACODE-LAST7 - check for that first
   let permutations = getPermutationsIterative(last7);
-  console.log('7 letter permutations:', permutations);
-
   const vanityNumbers: string[] = [];
-  for (let i = 0; i < permutations.length; i++) {
-    let permutation = permutations[i];
-    for (let j = 0; j < words.length; j++) {
-      if (permutation === words[j]) {
-        vanityNumbers.push(`${first3}${words[j].toUpperCase()}`);
-        if (vanityNumbers.length >= 5) {
-          break; // 5 best results max reached
-        }
-      }
-    }
-  }
-
+  getVanityNumbersFromPermutations(permutations, vanityNumbers, first3);
   if (vanityNumbers.length < 5) {
-    // couldn't get 5 results with single words; run again against last4 for higher chance of results
+    // fallback to last 4 digits being letters
+    const last4 = formattedPhoneNumber.slice(formattedPhoneNumber.length - 4);
+    const first6 = formattedPhoneNumber.slice(0, 6);
     permutations = getPermutationsIterative(last4);
-    console.log('4 letter permutations:', permutations);
-    for (let i = 0; i < permutations.length; i++) {
-      let permutation = permutations[i];
-      if (vanityNumbers.length >= 5) {
-        break; // 5 best results max reached
-      }
-      for (let j = 0; j < words.length; j++) {
-        if (permutation === words[j]) {
-          vanityNumbers.push(`${first6}${words[j].toUpperCase()}`);
-        }
-      }
-    }
+    getVanityNumbersFromPermutations(permutations, vanityNumbers, first6);
+  }
+  if (vanityNumbers.length < 5) {
+    // fallback to last 3 digits being letters
+    const first7 = formattedPhoneNumber.slice(formattedPhoneNumber.length - 7);
+    const last3 = formattedPhoneNumber.slice(formattedPhoneNumber.length - 3);
+    permutations = getPermutationsIterative(last3);
+    getVanityNumbersFromPermutations(permutations, vanityNumbers, first7);
   }
   console.log('vanityNumbers', vanityNumbers);
+  const connectBotResponse = generateConnectBotResponse(
+    vanityNumbers,
+    callerPhoneNumber
+  );
   await saveToDB(callerPhoneNumber, formattedPhoneNumber, vanityNumbers);
-  // return vanityNumbers;
-  const response = {
-    statusCode: 200,
-    body: JSON.stringify({
-      vanityNumbers,
-      callerPhoneNumber
-    })
-  };
-  console.log('response:', response);
-  let connectBotResponse;
-  if (vanityNumbers.length) {
-    const vanityNumbersJoined = vanityNumbers.join(', '); // so the bot can read the vanity number conversationally
-    const csvVanityNumbers = vanityNumbers.join('').split('').join(', '); // so the bot can spell out the digits more slowly
-    const csvCallerPhoneNumber = callerPhoneNumber.split('').join(', '); // so the bot can spell out the digits more slowly
-    connectBotResponse = `Thank you for calling our vanity number generator. 
-    We have successfully saved vanity phone numbers based on your caller number to our DynamoDB Database. 
-    Your phone number is ${csvCallerPhoneNumber}. The vanity numbers generated for this are: ${vanityNumbersJoined}. 
-    Spelled out they are ${csvVanityNumbers}...`;
-    if (callerPhoneNumber.includes('0') || callerPhoneNumber.includes('1')) {
-      connectBotResponse +=
-        "Please note that because your phone number includes a zero or a one in it, those numbers were replaced with 2's in your vanity numbers so they can correspond with a phone keypad...";
-    }
-  } else {
-    connectBotResponse =
-      'Thank you for calling our vanity number generator. Unfortunately, your phone number did not generate any results using the words we have available to compare to...';
-  }
-  connectBotResponse += 'Thanks for using our services. Have a great day!`';
   callback(null, {
     connectBotResponse
   });
-  return response;
 };
 
 const saveToDB = async (
   callerPhoneNumber: string,
-  formattedPhoneNumber: string,
+  formattedPhoneNumber: string, // determines actual vanity number (0's and 1's replaced with 2's)
   vanityNumbers: string[]
 ) => {
   try {
