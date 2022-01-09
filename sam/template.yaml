@@ -1,28 +1,12 @@
-# This is the SAM template that represents the architecture of your serverless application
-# https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-template-basics.html
-
-# The AWSTemplateFormatVersion identifies the capabilities of the template
-# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/format-version-structure.html
 AWSTemplateFormatVersion: 2010-09-09
-Description: >-
-  AWS Connect SAM - Vanity Number Generator App
-
+Description: AWS Connect SAM - Vanity Number Generator App
 Globals:
   Function:
     Runtime: nodejs14.x
-    Timeout: 20
-# Transform section specifies one or more macros that AWS CloudFormation uses to process your template
-# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/transform-section-structure.html
+    Timeout: 8
 Transform:
   - AWS::Serverless-2016-10-31
-
-# Resources declares the AWS resources that you want to include in the stack
-# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 Resources:
-  # Each Lambda function is defined by properties:
-  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-
-  # This is a Lambda function config associated with the source code: hello-from-lambda.js
   VanityPhoneNumberTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -39,7 +23,7 @@ Resources:
     Properties:
       CodeUri: build/
       Handler: webpack-bundle.handler
-      MemorySize: 1024
+      MemorySize: 4096
       Environment:
         Variables:
           TABLE_NAME: !Ref VanityPhoneNumberTable
@@ -57,6 +41,6 @@ Outputs:
       Name: !Sub "${AWS::StackName}-VanityPhoneNumberTableName"
   VanityPhoneNumberConverterFunction:
     Description: Vanity Phone Number Converter Function ARN
-    Value: !GetAtt VanityPhoneNumberTable.Arn
+    Value: !GetAtt VanityPhoneNumberConverterFunction.Arn
     Export:
       Name: !Sub "${AWS::StackName}-VanityPhoneNumberConverterFunction"
