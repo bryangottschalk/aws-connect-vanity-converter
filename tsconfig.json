@@ -1,7 +1,10 @@
 {
   "compilerOptions": {
-    "module": "ES6",
+    "module": "commonjs",
     "strict": false,
-    "moduleResolution": "node"
-  }
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "jsx": "react"
+  },
+  "exclude": ["node_modules", "webapp"]
 }

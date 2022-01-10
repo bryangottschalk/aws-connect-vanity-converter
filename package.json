@@ -22,7 +22,8 @@
   "scripts": {
     "build": "webpack",
     "test": "cross-env NODE_ENV=test mocha --timeout 10000 --config tests/runners/mocha/.mocharc.json",
-    "deploy": "webpack && sam deploy --guided"
+    "init-deploy": "webpack && sam deploy --guided",
+    "deploy": "webpack && sam deploy"
   },
   "dependencies": {
     "an-array-of-english-words": "^2.0.0"

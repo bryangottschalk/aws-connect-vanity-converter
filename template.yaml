@@ -29,7 +29,21 @@ Resources:
       AttributeDefinitions:
         - AttributeName: callerPhoneNumber
           AttributeType: S
-
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Auth:
+        ApiKeyRequired: false
+        UsagePlan:
+          CreateUsagePlan: PER_API
+      Cors:
+        AllowMethods: "'GET'"
+        AllowOrigin: "'*'"
+        AllowHeaders: "'Content-Type'"
+    Domain:
+      EndpointConfiguration: EDGE
+      BasePath: /
   VanityPhoneNumberConverterFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -44,6 +58,27 @@ Resources:
         - AWSLambdaBasicExecutionRole
         - DynamoDBCrudPolicy:
             TableName: !Ref VanityPhoneNumberTable
+  VanityPhoneNumberGETFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: build/
+      Handler: webpack-bundle.GEThandler
+      MemorySize: 4096
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref VanityPhoneNumberTable
+      Description: A Lambda function that gets all vanity numbers and their corresponding caller numbers from the DynamoDB table.
+      Policies:
+        - AWSLambdaBasicExecutionRole
+        - DynamoDBCrudPolicy:
+            TableName: !Ref VanityPhoneNumberTable
+      Events:
+        ApiDDBGet:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGateway
+            Method: GET
+            Path: /getvanitynumbers
   AmplifyRole:
     Type: AWS::IAM::Role
     Properties:
@@ -106,5 +141,8 @@ Outputs:
     Value: !GetAtt VanityPhoneNumberConverterFunction.Arn
     Export:
       Name: !Sub '${AWS::StackName}-VanityPhoneNumberConverterFunction'
-  AmplifyAppURL:
+  ReactAmplifyAppURL:
     Value: !GetAtt AmplifyApp.DefaultDomain
+  ApiEndpoint:
+    Description: REST API endpoint URL
+    Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/'

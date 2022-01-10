@@ -176,6 +176,7 @@ const saveToDB = async (
   }
 };
 
+// conditional export for tests
 if (process.env.NODE_ENV === 'test') {
   module.exports = {
     getPermutationsIterative,
