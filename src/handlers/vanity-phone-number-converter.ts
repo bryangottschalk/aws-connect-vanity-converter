@@ -175,3 +175,14 @@ const saveToDB = async (
     console.info(err);
   }
 };
+
+if (process.env.NODE_ENV === 'test') {
+  module.exports = {
+    getPermutationsIterative,
+    replaceUnhandledDigits,
+    getVanityNumbersFromPermutations,
+    generateConnectBotResponse,
+    handler,
+    saveToDB
+  };
+}

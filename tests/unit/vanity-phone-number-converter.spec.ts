@@ -1,30 +1,51 @@
 import { expect } from 'chai';
-import { handler as vanityPhoneNumberConverterHandler } from '../../src/handlers/vanity-phone-number-converter';
 import * as AWS from 'aws-sdk';
 import * as AWSMock from 'aws-sdk-mock';
+const vanityFuncsToTest = require('../../src/handlers/vanity-phone-number-converter'); // have to require because of conditional test func export
 
 /*
+TODO: add more tests mocking DynamoDB
 Test plans
 - successfully PUT to DB
     AWSMock.mock("DynamoDB", "putItem", function (params, callback) {
       callback(null, "successfully put item in database");
     });
 - errors if input is incorrect
-- handle case of duplicate record (caller phone number has already invoked lambda in the past)
 */
 
+const testPhoneNumber = '8004742253';
+
 describe('Test for vanity-phone-number-converter', function () {
-  it('Verifies successful response', async () => {
-    const result: any = await vanityPhoneNumberConverterHandler(
-      {
-        phoneNumber: '8004742253'
-      },
-      null,
-      null
+  beforeEach(async () => {
+    process.env.TABLE_NAME = 'VanityPhoneNumberTable';
+  });
+  it('replaceUnhandledDigits() replaces zeros and ones with twos', async () => {
+    const result: string = await vanityFuncsToTest.replaceUnhandledDigits(
+      testPhoneNumber
     );
-    // const result: string[] = await vanityPhoneNumberConverterHandler({
-    //   phoneNumber: "8004742253",
-    // });
-    expect(result).to.be.an('array');
+    expect(result).to.equal('8224742253');
+  });
+  it('getPermutationsIterative() gets a list of permutations', async () => {
+    const phoneNumber: string = await vanityFuncsToTest.replaceUnhandledDigits(
+      testPhoneNumber
+    );
+    const result: string = await vanityFuncsToTest.getPermutationsIterative(
+      phoneNumber
+    );
+    expect(result).to.have.length.greaterThan(0);
+    expect(result).to.not.include('0');
+    expect(result).to.not.include('1');
+  });
+  it('generateConnectBotResponse returns a string', async () => {
+    const phoneNumber: string = await vanityFuncsToTest.replaceUnhandledDigits(
+      testPhoneNumber
+    );
+    const vanityNumbers: string =
+      await vanityFuncsToTest.getPermutationsIterative(phoneNumber);
+    const botRes: string[] = vanityFuncsToTest.generateConnectBotResponse(
+      vanityNumbers,
+      phoneNumber
+    );
+    expect(botRes).to.have.length.greaterThan(0);
   });
 });
