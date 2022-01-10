@@ -6,6 +6,18 @@ Globals:
     Timeout: 8
 Transform:
   - AWS::Serverless-2016-10-31
+Parameters:
+  AmplifyAppName:
+    Type: String
+    Default: Vanity Number Generator Dashboard
+    Description: Contains results from the vanity number generator Lambda stored in DynamoDB.
+  Repository:
+    Type: String
+    Description: Github Repository URL in the format of https://github.com/<username>/<reponame>
+    Default: https://github.com/bryangottschalk/aws-connect-vanity-converter
+  OauthToken:
+    Type: String
+    Description: Github Oauth Access Token
 Resources:
   VanityPhoneNumberTable:
     Type: AWS::DynamoDB::Table
@@ -32,15 +44,67 @@ Resources:
         - AWSLambdaBasicExecutionRole
         - DynamoDBCrudPolicy:
             TableName: !Ref VanityPhoneNumberTable
+  AmplifyRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - amplify.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: Amplify
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 'amplify:*'
+                Resource: '*'
+  AmplifyApp:
+    Type: 'AWS::Amplify::App'
+    Properties:
+      Name: !Sub '${AmplifyAppName}'
+      Repository: !Ref Repository
+      Description: Vanity Number Generator Dashboard
+      OauthToken: !Ref OauthToken
+      BuildSpec: |-
+        version: 1
+        frontend:
+          phases:
+            preBuild:
+              commands: 
+                - npm install -g npm
+                - npm ci 
+            build:
+              commands:
+                - npm run build
+          artifacts:
+            baseDirectory: build
+            files:
+              - '**/*'
+          cache:
+            paths: []
+        appRoot: webapp
+      CustomRules:
+        - Source: </^[^.]+$|\.(?!(css|gif|ico|jpg|js|png|txt|svg|woff|ttf|map|json)$)([^.]+$)/>
+          Target: /index.html
+          Status: '200'
+      IAMServiceRole: !GetAtt AmplifyRole.Arn
 
 Outputs:
   VanityPhoneNumberTable:
     Description: Name of the DynamoDB Vanity Phone Numbers Table
     Value: !Ref VanityPhoneNumberTable
     Export:
-      Name: !Sub "${AWS::StackName}-VanityPhoneNumberTableName"
+      Name: !Sub '${AWS::StackName}-VanityPhoneNumberTableName'
   VanityPhoneNumberConverterFunction:
     Description: Vanity Phone Number Converter Function ARN
     Value: !GetAtt VanityPhoneNumberConverterFunction.Arn
     Export:
-      Name: !Sub "${AWS::StackName}-VanityPhoneNumberConverterFunction"
+      Name: !Sub '${AWS::StackName}-VanityPhoneNumberConverterFunction'
+  DefaultDomain:
+    Value: !GetAtt AmplifyApp.DefaultDomain
