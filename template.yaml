@@ -78,7 +78,7 @@ Resources:
             preBuild:
               commands: 
                 - npm install -g npm
-                - npm ci 
+                - npm ci
             build:
               commands:
                 - npm run build
@@ -106,5 +106,5 @@ Outputs:
     Value: !GetAtt VanityPhoneNumberConverterFunction.Arn
     Export:
       Name: !Sub '${AWS::StackName}-VanityPhoneNumberConverterFunction'
-  DefaultDomain:
+  AmplifyAppURL:
     Value: !GetAtt AmplifyApp.DefaultDomain
