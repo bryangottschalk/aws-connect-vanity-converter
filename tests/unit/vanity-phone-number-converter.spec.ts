@@ -24,6 +24,8 @@ describe('Test for vanity-phone-number-converter', function () {
       testPhoneNumber
     );
     expect(result).to.equal('8224742253');
+    expect(result).to.not.include('0');
+    expect(result).to.not.include('1');
   });
   it('getPermutationsIterative() gets a list of permutations', async () => {
     const phoneNumber: string = await vanityFuncsToTest.replaceUnhandledDigits(
@@ -33,10 +35,8 @@ describe('Test for vanity-phone-number-converter', function () {
       phoneNumber
     );
     expect(result).to.have.length.greaterThan(0);
-    expect(result).to.not.include('0');
-    expect(result).to.not.include('1');
   });
-  it('generateConnectBotResponse returns a string', async () => {
+  it('generateConnectBotResponse() returns a string with a length', async () => {
     const phoneNumber: string = await vanityFuncsToTest.replaceUnhandledDigits(
       testPhoneNumber
     );
