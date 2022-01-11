@@ -4,6 +4,8 @@
 - Call my Connect Instance phone number (833) 346-1507 to hear your vanity number results read verbally.
 - After calling, confirm the same result was added to the web application's table: https://master.d1xodj1i7x743l.amplifyapp.com
 
+## Summary
+
 This project contains AWS SAM CloudFormation templates to produce the same resources needed for above in your own AWS account:
 
 - AWS Lambda Functions: Includes a vanity number generation algorithm which is intended to be trigged by an AWS Contact Flow to produce vanity phone number suggestions to the user and a GET function for the list of all results passed to the webapp
@@ -72,8 +74,7 @@ You can also open the .drawio file in the root directory from the draw.io websit
 
 - Deploying Lambda with TypeScript: To this point I have deployed Lambdas with JavaScript and decided to add the challenge of using TypeScript here. Since Lambda doesn't natively support TypeScript, I installed Webpack to convert the code back to JavaScript before deploying. I ran into issues using Jest for testing with TypeScript in this scenario, so I ended up swapping in Mocha and Chai as testing libraries.
 - The vanity number generation algorithm: I did not initially realize how much a queue structure made sense for the permutation algorithm and began with a couple different solutions.
-- Connecting Lambda to Contact Flow: It took me some time to find where to add my Lambda to my AWS Connect Contact Flow. I initially referenced the ARN and could not get beyond the error path preceding the Lambda invokation, in which it did not seem to produce any error in CloudWatch for assistance with debugging. I then discovered this was due to not having permissions to reference or invoke it. I then found where to add the Lambda to my Connect Instance in the AWS Console and resolved the issue.
-- Reading Lambda response from Contact Flow: I was initially trying to read the return result of the Lambda using the
+- Connecting Lambda to Contact Flow: It took me some time to find where to add my Lambda to my AWS Connect Contact Flow. I initially referenced the ARN and could not get beyond the error path preceding the Lambda invokation, in which it did not seem to produce any error in CloudWatch for assistance with debugging. I then discovered this was due to not having permissions to reference or invoke it. I then found where to add the Lambda to my Connect Instance in the AWS Console and resolved the issue by being able to access the output of the lambda callback function from Connect.
 - Mocking the DynamoDB database for unit testing with Mocha/Chai. This isn't something I have done before and I would have liked more time to dive deeper into the proper mocking techniques and creating a DynamoDB Docker Image for local, more rigorous testing
 
 ## Cleanup
