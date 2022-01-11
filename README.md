@@ -1,7 +1,7 @@
 # AWS Connect Vanity Converter App
 
 ## Demo
-Call my Connect Instance phone number (833)346-1507 to hear your vanity number results read verbally
+Call my Connect Instance phone number (833) 346-1507 to hear your vanity number results read verbally
 After calling, confirm the same result was added to the web application's table: https://master.d1xodj1i7x743l.amplifyapp.com
 
 This project contains AWS SAM CloudFormation templates to produce the following resources:
