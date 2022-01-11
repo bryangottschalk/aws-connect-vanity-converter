@@ -22,12 +22,16 @@ interface VanityNumberDTO {
 
 const ComponentContainer = styled.div`
   margin: 0px 32px;
+  @media only screen and (max-width: 720px) {
+    margin: 0px 8px;
+  }
 `;
 
 const Title = styled.h1`
   margin: 0px;
   padding: 16px 0px 16px 16px;
   color: #61dafb;
+  text-align: center;
 `;
 
 const BoldTableCell = styled(TableCell)`
@@ -61,7 +65,7 @@ export default function VanityNumberTable(): ReactElement {
       setIsLoading(true);
       try {
         const { data }: AxiosResponse<VanityNumberDTO[]> = await axios.get(
-          `${environment.API_URL}/Prod/getvanitynumbers`
+          `${environment.API_URL}/getvanitynumbers`
         );
         setIsLoading(false);
         setVanityNumberResults(data);
