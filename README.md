@@ -1,10 +1,10 @@
 # AWS Connect Vanity Converter App
 
 ## Demo
-Call my Connect Instance phone number (833) 346-1507 to hear your vanity number results read verbally
-After calling, confirm the same result was added to the web application's table: https://master.d1xodj1i7x743l.amplifyapp.com
+- Call my Connect Instance phone number (833) 346-1507 to hear your vanity number results read verbally.
+- After calling, confirm the same result was added to the web application's table: https://master.d1xodj1i7x743l.amplifyapp.com
 
-This project contains AWS SAM CloudFormation templates to produce the following resources:
+This project contains AWS SAM CloudFormation templates to produce the same resources needed for above in your own AWS account:
 
 - AWS Lambda Functions: Includes a vanity number generation algorithm which is intended to be trigged by an AWS Contact Flow to produce vanity phone number suggestions to the user and a GET function for the list of all results passed to the webapp
 - API Gateway deploymement exposing the getvanitynumbers endpoint to the webapp
