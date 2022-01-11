@@ -1,23 +1,51 @@
 import { expect } from 'chai';
-import * as AWS from 'aws-sdk';
-import * as AWSMock from 'aws-sdk-mock';
-const vanityFuncsToTest = require('../../src/handlers/vanity-phone-number-converter'); // have to require because of conditional test func export
+import { mockClient } from 'aws-sdk-client-mock';
+import { DynamoDBDocumentClient, ScanCommand } from '@aws-sdk/lib-dynamodb';
 
-/*
-TODO: add more tests mocking DynamoDB
-Test plans
-- successfully PUT to DB
-    AWSMock.mock("DynamoDB", "putItem", function (params, callback) {
-      callback(null, "successfully put item in database");
-    });
-- errors if input is incorrect
-*/
+const vanityFuncsToTest = require('../../src/handlers/vanity-phone-number-converter'); // have to require because of conditional test func export
+const ddbMock = mockClient(DynamoDBDocumentClient);
 
 const testPhoneNumber = '8004742253';
 
 describe('Test for vanity-phone-number-converter', function () {
   beforeEach(async () => {
-    process.env.TABLE_NAME = 'VanityPhoneNumberTable';
+    ddbMock.reset();
+  });
+
+  it('DDB Scan should get vanity number results', async () => {
+    const seedData = [
+      {
+        callerPhoneNumber: '8722210174',
+        formattedPhoneNumber: '8722222274',
+        vanityNumbers: [
+          '872222ABRI',
+          '872222BASH',
+          '872222CAPH',
+          '872222CAPI',
+          '872222CASH'
+        ]
+      },
+      {
+        callerPhoneNumber: '8004742253',
+        formattedPhoneNumber: '8224742253',
+        vanityNumbers: [
+          '822GRIBBLE',
+          '822474ABLE',
+          '822474BAKE',
+          '822474BALD',
+          '822474BALE'
+        ]
+      }
+    ];
+    ddbMock.on(ScanCommand).resolves({
+      Items: seedData
+    });
+    const result = await ddbMock.send(
+      new ScanCommand({
+        TableName: process.env.TABLE_NAME
+      })
+    );
+    expect(result['Items']).to.eql(seedData);
   });
   it('replaceUnhandledDigits() replaces zeros and ones with twos', async () => {
     const result: string = await vanityFuncsToTest.replaceUnhandledDigits(

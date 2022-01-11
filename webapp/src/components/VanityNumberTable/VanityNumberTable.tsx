@@ -11,6 +11,7 @@ import axios, { AxiosResponse } from 'axios';
 import columns from './columns';
 import TableColumn from '../../types/TableColumn';
 import { CircularProgress } from '@mui/material';
+import { environment } from '../../environment';
 
 interface VanityNumberDTO {
   [key: string]: any;
@@ -61,7 +62,7 @@ export default function VanityNumberTable(): ReactElement {
       try {
         // TODO: inject api url into process.env from Amplify SAM Template
         const { data }: AxiosResponse<VanityNumberDTO[]> = await axios.get(
-          'https://pndcjwkl1k.execute-api.us-east-1.amazonaws.com/Prod/getvanitynumbers'
+          `${environment.API_URL}/Prod/getvanitynumbers`
         );
         setIsLoading(false);
         setVanityNumberResults(data);

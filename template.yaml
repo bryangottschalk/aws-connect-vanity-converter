@@ -114,6 +114,7 @@ Resources:
               commands: 
                 - npm install -g npm
                 - npm ci
+                - npm run config
             build:
               commands:
                 - npm run build
@@ -129,7 +130,23 @@ Resources:
           Target: /index.html
           Status: '200'
       IAMServiceRole: !GetAtt AmplifyRole.Arn
-
+  AmplifyMasterBranch:
+    Type: AWS::Amplify::Branch
+    DependsOn:
+      - AmplifyApp
+    Properties:
+      BranchName: master
+      AppId: !GetAtt AmplifyApp.AppId
+      Description: Master Branch
+      EnableAutoBuild: true
+      EnvironmentVariables:
+        - Name: API_URL
+          Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod'
+      Tags:
+        - Key: Name
+          Value: Vanity Number Generator App master
+        - Key: Branch
+          Value: master
 Outputs:
   VanityPhoneNumberTable:
     Description: Name of the DynamoDB Vanity Phone Numbers Table
@@ -145,4 +162,4 @@ Outputs:
     Value: !GetAtt AmplifyApp.DefaultDomain
   ApiEndpoint:
     Description: REST API endpoint URL
-    Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod/'
+    Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/Prod'

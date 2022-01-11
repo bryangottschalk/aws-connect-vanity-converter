@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "private": true,
   "devDependencies": {
+    "@aws-sdk/lib-dynamodb": "^3.46.0",
     "@types/chai": "^4.3.0",
     "@types/mocha": "^9.0.0",
     "aws-sdk": "^2.1053.0",
@@ -20,8 +21,9 @@
     "webpack-cli": "^4.9.1"
   },
   "scripts": {
+    "config": "ts-node set-env.js",
     "build": "webpack",
-    "test": "cross-env NODE_ENV=test mocha --timeout 10000 --config tests/runners/mocha/.mocharc.json",
+    "test": "cross-env NODE_ENV=test TABLE_NAME=VanityPhoneNumberTable AWS_REGION=us-east-1 mocha --timeout 8000 --config tests/runners/mocha/.mocharc.json",
     "init-deploy": "webpack && sam deploy --guided",
     "deploy": "webpack && sam deploy"
   },

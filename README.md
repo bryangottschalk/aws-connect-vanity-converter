@@ -1,16 +1,19 @@
 # AWS Connect Vanity Converter App
 
-This project contains AWS SAM CloudFormation templates to the following resources:
+This project contains AWS SAM CloudFormation templates to produce the following resources:
 
-- AWS Lambda Function: Includes a vanity number generation algorithm which is intended to be trigged by an AWS Contact Flow to produce vanity phone number suggestions to the user
+- AWS Lambda Functions: Includes a vanity number generation algorithm which is intended to be trigged by an AWS Contact Flow to produce vanity phone number suggestions to the user and a GET function for the list of all results passed to the webapp
+- API Gateway deploymement exposing the getvanitynumbers endpoint to the webapp
 - DynamoDB Table: Stores the results of the Lambda function containing the caller's phone number and the suggested vanity phone numbers
+- React Web Application displaying the results of the converter Lambda
+- Default Continous deployment of the React Single Page App, linked to the Master branch, passing in the generated API endpoint from the ApiGateway created.
 
 The repository also includes unit tests and a webpack configuration to allow the Lambda function to be written in TypeScript.
 
-- `src` - Code for the application's Lambda function.
-- `events` - Invocation events that you can use to invoke the function.
+- `src > handlers` - Code for the application's Lambda functions.
 - `tests` - Unit tests for the application code.
 - `template.yaml` - The SAM template that defines the application's AWS resources.
+- `webapp` - Small React application for displaying the DynamoDB results from the converter lambda
 
 ## Quick Start
 
@@ -28,6 +31,8 @@ Prerequisites:
 npm i
 npm run init-deploy (runs npm run build and sam deploy)
 ```
+
+Note: to link continous deployment to the master branch you must pass in a personal access token to the SAM CLI prompt. This template uses GitHub: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 
 2. Create a Connect instance in the AWS Console - note your Access URL for step 5
 3. Add a phone number to your Connect instance
@@ -55,9 +60,9 @@ You can also open the .drawio file in the root directory from the draw.io websit
 - Consider re-writing iterative vanity number permutations algorithm to be recursive rather than iterative. This would make the function more terse but is not likely to improve time complexity. A recursive algorithm could be achieved through depth first search.
 - In the case that the caller's phone number has 0's or 1's, the Lambda vanity number function assumes both of those digits are 2's. This could produce incorrect vanity number results, but for the case of practicality and wanting users to have a higher chance of producing results I decided to add this assumption. In production this would likely return 0 results, an error, or check a different portion of the number that didn't include 0's or 1's for vanity possibilities instead.
 - Write the Contact Flow as SAM or CDK code instead of requiring an import from the AWS Console
-- Duplicate the CloudFormation template aspects of this application using AWS CDK in a new directory
+- Duplicate the CloudFormation template aspects of this application using AWS CDK in a new directory (I chose SAM based on more familiarity)
 - Set up continuous integration with unit tests and continuously deployment with the repository
-- Write stricter CORS policies for the API to only accept requests from the single page app
+- Write stricter CORS policies for the Lambda API to only accept requests from the single page app and Connect
 
 ## Challenges
 
@@ -65,6 +70,7 @@ You can also open the .drawio file in the root directory from the draw.io websit
 - The vanity number generation algorithm: I did not initially realize how much a queue structure made sense for the permutation algorithm and began with a couple different solutions.
 - Connecting Lambda to Contact Flow: It took me some time to find where to add my Lambda to my AWS Connect Contact Flow. I initially referenced the ARN and could not get beyond the error path preceding the Lambda invokation, in which it did not seem to produce any error in CloudWatch for assistance with debugging. I then discovered this was due to not having permissions to reference or invoke it. I then found where to add the Lambda to my Connect Instance in the AWS Console and resolved the issue.
 - Reading Lambda response from Contact Flow: I was initially trying to read the return result of the Lambda using the
+- Mocking the DynamoDB database for unit testing with Mocha/Chai. This isn't something I have done before and I would have liked more time to dive deeper into the proper mocking techniques and creating a DynamoDB Docker Image for local, more rigorous testing
 
 ## Cleanup
 
