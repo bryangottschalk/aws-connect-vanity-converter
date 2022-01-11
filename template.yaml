@@ -38,9 +38,9 @@ Resources:
         UsagePlan:
           CreateUsagePlan: PER_API
       Cors:
-        AllowMethods: "'GET'"
+        AllowMethods: "'GET, OPTIONS'"
         AllowOrigin: "'*'"
-        AllowHeaders: "'Content-Type'"
+        AllowHeaders: "'Content-Type,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'"
     Domain:
       EndpointConfiguration: EDGE
       BasePath: /

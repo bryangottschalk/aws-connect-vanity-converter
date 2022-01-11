@@ -14,7 +14,12 @@ const getDDB = async () => {
     const allData = await DDB.scan(params).promise();
     const response = {
       statusCode: 200,
-      body: JSON.stringify(allData.Items)
+      body: JSON.stringify(allData.Items),
+      headers: {
+        'Access-Control-Allow-Headers': '*',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'OPTIONS,GET'
+      }
     };
     return response;
   } catch (err) {

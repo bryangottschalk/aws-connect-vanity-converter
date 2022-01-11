@@ -26,8 +26,7 @@ Prerequisites:
 
 ```bash
 npm i
-npm run build
-sam deploy --guided
+npm run init-deploy (runs npm run build and sam deploy)
 ```
 
 2. Create a Connect instance in the AWS Console - note your Access URL for step 5
@@ -57,6 +56,7 @@ You can also open the .drawio file in the root directory from the draw.io websit
 - Write the Contact Flow as SAM or CDK code instead of requiring an import from the AWS Console
 - Duplicate the CloudFormation template aspects of this application using AWS CDK in a new directory
 - Set up continuous integration with unit tests and continuously deployment with the repository
+- Write stricter CORS policies for the API to only accept requests from the single page app
 
 ## Challenges
 
