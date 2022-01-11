@@ -1,10 +1,10 @@
 const path = require('path');
 
 module.exports = {
-  entry: [
-    './src/handlers/vanity-phone-number-converter.ts',
-    './src/handlers/get-ddb.ts'
-  ],
+  entry: {
+    PUTLambda: './src/handlers/vanity-phone-number-converter.ts',
+    GETLambda: './src/handlers/get-ddb.ts'
+  },
   module: {
     rules: [
       {
@@ -21,8 +21,8 @@ module.exports = {
   target: 'node',
   mode: 'production',
   output: {
-    libraryTarget: 'commonjs',
-    filename: 'webpack-bundle.js',
+    libraryTarget: 'commonjs2',
+    filename: '[name].js', // The [name] is taken from entry properties, so if we have PUTLambda and GETLambda as properties, we got 2 output files - PUTLambda.js and GETLambda.js
     path: path.resolve(__dirname, 'build')
   }
 };

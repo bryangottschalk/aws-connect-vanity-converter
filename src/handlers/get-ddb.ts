@@ -1,7 +1,7 @@
 import { DynamoDB } from 'aws-sdk';
 const DDB = new DynamoDB.DocumentClient();
 
-export const GEThandler = async (event, context, callback) => {
+export const handler = async (event, context, callback) => {
   const result = await getDDB();
   return result;
 };

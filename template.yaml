@@ -48,7 +48,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: build/
-      Handler: webpack-bundle.handler
+      Handler: PUTLambda.handler
       MemorySize: 4096
       Environment:
         Variables:
@@ -62,7 +62,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: build/
-      Handler: webpack-bundle.GEThandler
+      Handler: GETLambda.handler
       MemorySize: 4096
       Environment:
         Variables:

@@ -31,8 +31,9 @@ npm run init-deploy (runs npm run build and sam deploy)
 
 2. Create a Connect instance in the AWS Console - note your Access URL for step 5
 3. Add a phone number to your Connect instance
-4. Add the Lambda generated from the SAM deploy to your new Connect instance. Go to Amazon Connect > Your instance > Contact flows > AWS Lambda > Add Lambda Function
-5. Import the Contact Flow from ./VanityPhoneNumberContactFlow.json. Go to your Access URL for your Connect Instance > Login > Go to Routing/Contact flows > Click "Create contact flow" > Down arrow next to save > "Import flow" and select the JSON file from this repo.
+4. Import the Contact Flow from ./VanityPhoneNumberContactFlow.json. Go to your Access URL for your Connect Instance > Login > Go to Routing/Contact flows > Click "Create contact flow" > Down arrow next to save > "Import flow" and select the JSON file from this repo.
+5. Add the Lambda generated from the SAM deploy to your new Connect instance. Go to Amazon Connect > Your instance > Contact flows > AWS Lambda > Add Lambda Function
+6. Connect the Lambda to the Contact flow you imported -> Click the step "Invoke AWS Lambda function" from the drag and drop interface and select the generated function ARN.
 
 ## Unit tests
 
