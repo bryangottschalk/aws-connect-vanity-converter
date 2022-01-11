@@ -8,7 +8,7 @@ console.log('environment in amplify:', process.env);
 
 // `environment.ts` file structure
 const envConfigFile = `export const environment = {
-    apiUrl: '${process.env.API_URL}'
+    API_URL: '${process.env.API_URL}'
   };
   `;
 
