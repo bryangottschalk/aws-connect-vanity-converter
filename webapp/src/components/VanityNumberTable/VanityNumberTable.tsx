@@ -60,7 +60,6 @@ export default function VanityNumberTable(): ReactElement {
     async function fetchData() {
       setIsLoading(true);
       try {
-        // TODO: inject api url into process.env from Amplify SAM Template
         const { data }: AxiosResponse<VanityNumberDTO[]> = await axios.get(
           `${environment.API_URL}/Prod/getvanitynumbers`
         );
