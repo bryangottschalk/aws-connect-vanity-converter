@@ -67,7 +67,7 @@ You can also open the .drawio file in the root directory from the draw.io websit
 - In the case that the caller's phone number has 0's or 1's, the Lambda vanity number function assumes both of those digits are 2's. This could produce incorrect vanity number results, but for the case of practicality and wanting users to have a higher chance of producing results I decided to add this assumption. In production this would likely return 0 results, an error, or check a different portion of the number that didn't include 0's or 1's for vanity possibilities instead.
 - Write the Contact Flow as SAM or CDK code instead of requiring an import from the AWS Console
 - Duplicate the CloudFormation template aspects of this application using AWS CDK in a new directory (I chose SAM based on more familiarity)
-- Set up continuous integration with unit tests and continuously deployment with the repository
+- Set up continuous integration that automatically runs unit tests
 - Write stricter CORS policies for the Lambda API to only accept requests from the single page app and Connect
 
 ## Challenges
